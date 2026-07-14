@@ -1,0 +1,681 @@
+<title>Café Ads Radar — Benchmark competitivo (EE. UU.)</title>
+<style>
+  :root{
+    --bg:#16110D; --panel:#1F1813; --panel2:#2A2018; --line:#362A20;
+    --hi:#F5EEE4; --mid:#B3A392; --dim:#7A6C5C;
+    --accent:#E08A3C; --accent2:#5FB49C;
+    --up:#6BCB93; --down:#E8756B; --warn:#E0B44A;
+    --colab:#E08A3C; --estac:#E0B44A; --sost:#5FB49C; --drop:#C98BE0; --retail:#6BA9E0; --reten:#E8756B;
+    --mono:ui-monospace,"SF Mono","Cascadia Mono",Menlo,Consolas,monospace;
+    --sans:"Helvetica Neue","Segoe UI",system-ui,-apple-system,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:
+    radial-gradient(1100px 560px at 88% -8%, rgba(224,138,60,.12), transparent 60%),
+    radial-gradient(820px 460px at -6% 8%, rgba(95,180,156,.08), transparent 55%),
+    var(--bg);
+    color:var(--hi);font-family:var(--sans);-webkit-font-smoothing:antialiased;line-height:1.45;}
+  .app{max-width:1240px;margin:0 auto;padding:26px 22px 64px;}
+  .mono{font-family:var(--mono);font-variant-numeric:tabular-nums;}
+
+  header.top{display:flex;flex-wrap:wrap;align-items:flex-end;gap:14px 22px;justify-content:space-between;padding-bottom:18px;border-bottom:1px solid var(--line);}
+  .brand{display:flex;flex-direction:column;gap:7px;}
+  .kicker{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--accent);font-weight:700;}
+  h1{margin:0;font-size:29px;line-height:1.05;font-weight:800;letter-spacing:-.02em;text-wrap:balance;}
+  h1 span{color:var(--accent);}
+  .sub{color:var(--mid);font-size:13.5px;max-width:62ch;}
+  .badges{display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
+  .badge{font-size:11px;font-weight:600;padding:5px 10px;border-radius:999px;border:1px solid var(--line);color:var(--mid);white-space:nowrap;}
+  .badge.live{border-color:rgba(107,203,147,.35);color:var(--up);background:rgba(107,203,147,.07);display:inline-flex;align-items:center;gap:6px;}
+  .badge.live::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--up);animation:pulse 2.2s infinite;}
+  .badge.sample{border-color:rgba(224,180,74,.4);color:var(--warn);background:rgba(224,180,74,.08);}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(107,203,147,.5)}70%{box-shadow:0 0 0 6px rgba(107,203,147,0)}100%{box-shadow:0 0 0 0 rgba(107,203,147,0)}}
+  @media (prefers-reduced-motion:reduce){.badge.live::before{animation:none}}
+
+  .filters{position:sticky;top:0;z-index:20;margin:16px -22px 0;padding:13px 22px;background:rgba(22,17,13,.9);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);}
+  .frow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
+  .flabel{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);font-weight:700;min-width:64px;}
+  .chip{font-size:12.5px;font-weight:500;padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--mid);cursor:pointer;transition:.14s;white-space:nowrap;font-family:inherit;}
+  .chip:hover{border-color:var(--accent);color:var(--hi);}
+  .chip.active{background:var(--accent);border-color:var(--accent);color:#241a10;font-weight:700;}
+  .seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;background:var(--panel);}
+  .seg button{border:0;background:transparent;color:var(--mid);font-size:12.5px;font-weight:600;padding:6px 14px;cursor:pointer;font-family:inherit;}
+  .seg button.active{background:var(--accent2);color:#062b24;}
+  .chip:focus-visible,.seg button:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+  .count{color:var(--mid);font-size:12.5px;font-family:var(--mono);}
+
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(176px,1fr));gap:12px;margin-top:20px;}
+  .kpi{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:15px 16px;display:flex;flex-direction:column;gap:6px;min-height:104px;}
+  .kpi .kl{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--dim);font-weight:700;}
+  .kpi .kv{font-size:26px;font-weight:800;font-family:var(--mono);letter-spacing:-.02em;font-variant-numeric:tabular-nums;}
+  .kpi .kv small{font-size:14px;color:var(--mid);}
+  .kpi .kf{margin-top:auto;font-size:11.5px;color:var(--mid);}
+  .kpi .kf b{color:var(--hi);font-family:var(--mono);}
+
+  .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:14px;}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px 18px;min-width:0;}
+  .card.wide{grid-column:1 / -1;}
+  .card h2{margin:0 0 2px;font-size:15px;font-weight:700;letter-spacing:-.01em;display:flex;align-items:center;gap:9px;flex-wrap:wrap;}
+  .card .desc{margin:0 0 13px;font-size:12.5px;color:var(--mid);}
+  .chart{width:100%;height:auto;display:block;}
+  text.axis{fill:var(--dim);font-size:10px;font-family:var(--mono);}
+  text.axistitle{fill:var(--mid);font-size:10.5px;font-weight:600;letter-spacing:.03em;}
+  line.grid{stroke:var(--line);stroke-width:1;}
+  line.bench{stroke:var(--accent2);stroke-width:1.4;stroke-dasharray:5 4;opacity:.85;}
+
+  .legend{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;}
+  .legend span{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;color:var(--mid);}
+  .legend i{width:10px;height:10px;border-radius:3px;display:inline-block;}
+
+  .rank{display:flex;flex-direction:column;gap:9px;}
+  .rrow{display:grid;grid-template-columns:20px 1fr auto;gap:10px;align-items:center;}
+  .rrow .rnk{font-family:var(--mono);font-size:12px;color:var(--dim);text-align:right;}
+  .rrow .rname{font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .rrow .rmeta{font-size:11px;color:var(--dim);}
+  .rrow .rval{font-family:var(--mono);font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;text-align:right;}
+  .rbar{grid-column:2 / -1;height:6px;border-radius:4px;background:var(--panel2);overflow:hidden;margin-top:-3px;}
+  .rbar > i{display:block;height:100%;border-radius:4px;}
+
+  .stackrow{margin-bottom:14px;}
+  .stackrow:last-child{margin-bottom:0;}
+  .stackrow .sh{font-size:12px;color:var(--mid);margin-bottom:6px;display:flex;justify-content:space-between;}
+  .stackrow .sh b{color:var(--hi);font-family:var(--mono);}
+  .stack{display:flex;height:14px;border-radius:5px;overflow:hidden;background:var(--panel2);}
+  .stack > i{height:100%;display:block;}
+
+  .tl-axis{position:relative;height:20px;margin-left:var(--lblw,168px);border-bottom:1px solid var(--line);margin-bottom:8px;}
+  .tl-axis .tick{position:absolute;top:0;transform:translateX(-50%);font-size:9.5px;color:var(--dim);font-family:var(--mono);}
+  .tlrow{display:grid;grid-template-columns:var(--lblw,168px) 1fr;gap:10px;align-items:center;margin-bottom:7px;}
+  .tlrow .tll{min-width:0;}
+  .tlrow .tll .nm{font-size:12px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .tlrow .tll .mt{font-size:10px;color:var(--dim);}
+  .tltrack{position:relative;height:20px;background:var(--panel2);border-radius:5px;overflow:hidden;}
+  .tlbar{position:absolute;top:3px;height:14px;border-radius:4px;min-width:4px;}
+  .tlbar.ongoing{border-top-right-radius:0;border-bottom-right-radius:0;}
+  .tlbar.approx{opacity:.62;background-image:repeating-linear-gradient(45deg,rgba(0,0,0,.18) 0 4px,transparent 4px 8px);}
+  .tlnow{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--up);opacity:.7;}
+
+  .tablewrap{overflow-x:auto;border-radius:12px;border:1px solid var(--line);}
+  table{border-collapse:collapse;width:100%;font-size:12.5px;min-width:720px;}
+  thead th{position:sticky;top:0;background:var(--panel2);text-align:right;padding:10px 12px;font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--mid);font-weight:700;cursor:pointer;white-space:nowrap;border-bottom:1px solid var(--line);}
+  thead th:first-child,tbody td:first-child{text-align:left;}
+  thead th.up::after{content:" ▲";color:var(--accent);}
+  thead th.down::after{content:" ▼";color:var(--accent);}
+  tbody td{padding:9px 12px;text-align:right;border-bottom:1px solid var(--line);font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap;}
+  tbody td.name{font-family:var(--sans);font-weight:600;text-align:left;}
+  tbody tr:hover{background:var(--panel2);}
+  tbody td.na{color:var(--dim);}
+  .tag{font-family:var(--sans);font-size:10.5px;padding:2px 7px;border-radius:5px;background:var(--panel2);color:var(--mid);border:1px solid var(--line);}
+  .tag.roaster{color:var(--accent2);border-color:rgba(95,180,156,.4);}
+  .tag.dtc{color:var(--accent);border-color:rgba(224,138,60,.4);}
+  .pill-st{font-family:var(--sans);font-size:10px;padding:1px 7px;border-radius:999px;}
+  .pill-st.on{background:rgba(107,203,147,.14);color:var(--up);}
+  .pill-st.off{background:rgba(122,108,92,.18);color:var(--dim);}
+
+  .insights{display:grid;grid-template-columns:repeat(auto-fit,minmax(232px,1fr));gap:12px;}
+  .ins{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:13px;padding:14px;display:flex;gap:11px;}
+  .ins .ic{font-size:19px;line-height:1;flex:none;}
+  .ins .ih{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:3px;}
+  .ins .it{font-size:12.5px;color:var(--mid);}
+  .ins .it b{color:var(--hi);font-weight:700;}
+
+  .bgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;}
+  .bcard{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px 17px;display:flex;flex-direction:column;gap:12px;}
+  .bcard .bh{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;}
+  .bcard .bh .nm{font-size:16px;font-weight:800;letter-spacing:-.01em;}
+  .bcard .bh .hd{font-family:var(--mono);font-size:11px;color:var(--dim);}
+  .sg{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:10px;overflow:hidden;}
+  .sg .s{background:var(--panel);padding:9px 10px;}
+  .sg .s .k{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.05em;color:var(--dim);}
+  .sg .s .v{font-family:var(--mono);font-weight:700;font-size:15px;margin-top:2px;font-variant-numeric:tabular-nums;}
+  .sg .s .v.sm{font-size:12px;color:var(--dim);}
+  .pilltags{display:flex;flex-wrap:wrap;gap:6px;}
+  .pt{font-size:11px;background:var(--panel2);color:var(--mid);padding:3px 8px;border-radius:6px;border:1px solid var(--line);}
+  .adsline{font-size:12px;display:flex;align-items:center;gap:8px;padding:8px 11px;border-radius:8px;background:var(--panel2);border:1px solid var(--line);}
+  .adsline .k{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--dim);}
+  .adsline b{font-family:var(--mono);color:var(--hi);}
+  .recent{font-size:12px;color:var(--mid);}
+  .recent .k{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--dim);display:block;margin-bottom:5px;}
+  .recent ul{margin:0;padding-left:15px;} .recent li{margin-bottom:2px;}
+  .cardnote{font-size:11px;color:var(--dim);border-top:1px dashed var(--line);padding-top:9px;}
+
+  footer{margin-top:32px;padding-top:18px;border-top:1px solid var(--line);color:var(--dim);font-size:12px;}
+  footer b{color:var(--mid);}
+  footer .cols{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+  footer ul{margin:8px 0 0;padding-left:18px;} footer li{margin:4px 0;line-height:1.5;}
+  .keyrow{display:flex;gap:16px;flex-wrap:wrap;margin-top:10px;font-family:var(--mono);font-size:11px;}
+
+  @media(max-width:860px){.grid{grid-template-columns:1fr;}.bgrid{grid-template-columns:1fr;}h1{font-size:23px;}footer .cols{grid-template-columns:1fr;}.sg{grid-template-columns:repeat(2,1fr);}:root{--lblw:120px;}}
+</style>
+
+<div class="app">
+  <header class="top">
+    <div class="brand">
+      <div class="kicker">Café Ads Radar · Estados Unidos</div>
+      <h1>Benchmark competitivo de <span>marcas de café</span></h1>
+      <p class="sub">Presencia en Instagram/Facebook y actividad publicitaria en Meta de 6 marcas DTC y de especialidad — vista consolidada por temas y estadísticas, desglose por marca, timeline de campañas y tracking diario.</p>
+    </div>
+    <div class="badges">
+      <span class="badge live">Tracking activo</span>
+      <span class="badge" id="b-date">Snapshot · —</span>
+      <span class="badge">Datos reales best-effort</span>
+    </div>
+  </header>
+
+  <section class="filters" aria-label="Filtros">
+    <div class="frow">
+      <span class="flabel">Segmento</span>
+      <div class="seg" id="fseg">
+        <button data-c="todos" class="active">Todas</button>
+        <button data-c="dtc">DTC & suscripción</button>
+        <button data-c="roaster">Roaster & café</button>
+      </div>
+      <span style="flex:1"></span>
+      <span class="count" id="count"></span>
+    </div>
+    <div class="frow" style="margin-top:10px">
+      <span class="flabel">Marca</span>
+      <div id="fbrand" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
+    </div>
+  </section>
+
+  <section class="kpis" id="kpis" aria-label="Indicadores"></section>
+
+  <div class="grid">
+
+    <div class="card">
+      <h2>Seguidores en Instagram</h2>
+      <p class="desc">Tamaño de audiencia por marca (snapshot real de hoy).</p>
+      <div class="rank" id="c-followers"></div>
+    </div>
+
+    <div class="card">
+      <h2>Engagement rate por marca</h2>
+      <p class="desc">% de engagement vs. benchmark del sector café (línea). “—” = no público.</p>
+      <div id="c-er"></div>
+      <div class="legend"><span><i style="background:var(--accent)"></i>DTC & suscripción</span><span><i style="background:var(--accent2)"></i>Roaster & café</span><span><i style="background:var(--accent2);opacity:.6"></i>Benchmark 0.19%</span></div>
+    </div>
+
+    <div class="card">
+      <h2>Anuncios activos en Meta</h2>
+      <p class="desc">Vía Motion (Ad Library). “s/d” = marca sin página en Motion.</p>
+      <div class="rank" id="c-ads"></div>
+    </div>
+
+    <div class="card">
+      <h2>Facebook — seguidores</h2>
+      <p class="desc">Audiencia en la página de Facebook por marca.</p>
+      <div class="rank" id="c-fb"></div>
+    </div>
+
+    <div class="card wide">
+      <h2>ER vs. tamaño de audiencia</h2>
+      <p class="desc">Cada burbuja es una marca; tamaño = nº de posts. Solo las marcas con ER público aparecen.</p>
+      <div id="c-scatter"></div>
+    </div>
+
+    <div class="card">
+      <h2>Mix de formatos creativos</h2>
+      <p class="desc">Distribución de formatos en los anuncios activos (Motion).</p>
+      <div id="c-mix"></div>
+    </div>
+
+    <div class="card">
+      <h2>Prevalencia de pilares de contenido</h2>
+      <p class="desc">Cuántas de las marcas usan cada pilar (medible en perfiles públicos).</p>
+      <div class="rank" id="c-pillars"></div>
+    </div>
+
+    <div class="card wide">
+      <h2>Timeline de campañas por tema <span class="badge live" style="border-color:rgba(107,203,147,.35)">fechas reales</span></h2>
+      <p class="desc">Inicio y fin real de cada campaña/colab por tema (fuente: prensa del sector). Barra rayada = fecha aproximada · sin borde derecho = en curso.</p>
+      <div id="c-gantt"></div>
+      <div class="legend" id="l-gantt" style="margin-top:14px"></div>
+    </div>
+
+    <div class="card wide">
+      <h2>Fechas de campañas — detalle</h2>
+      <p class="desc">Inicio / fin por tema, ordenable. Clic en el encabezado.</p>
+      <div class="tablewrap"><table id="tbl-camp">
+        <thead><tr>
+          <th data-k="brand">Marca</th><th data-k="name">Tema / campaña</th><th data-k="cat">Categoría</th>
+          <th data-k="s">Inicio</th><th data-k="e">Fin</th><th data-k="status">Estado</th>
+        </tr></thead><tbody id="camp-body"></tbody>
+      </table></div>
+    </div>
+
+    <div class="card wide">
+      <h2>Vuelo de anuncios (inicio/fin por ad) <span class="badge sample">◆ muestra — se llena con la captura diaria</span></h2>
+      <p class="desc">Estructura de fechas por anuncio individual. La Meta Ad Library muestra la fecha de inicio de cada ad; el agente diario la captura y estas barras se vuelven reales. Hoy se muestra una muestra ilustrativa (marcas con Motion: Onyx, Blue Bottle, Chamberlain).</p>
+      <div id="c-flight"></div>
+    </div>
+
+    <div class="card wide">
+      <h2>Crecimiento de seguidores — tracking diario <span class="badge sample" id="daily-badge">◆ proyección de muestra</span></h2>
+      <p class="desc">Hoy es la línea base (punto sólido = dato real). La línea punteada es una proyección de muestra: se reemplaza por la curva real conforme se acumulan snapshots diarios.</p>
+      <div id="c-daily"></div>
+      <div class="legend" id="l-daily"></div>
+    </div>
+
+    <div class="card wide">
+      <h2>Conclusiones automáticas</h2>
+      <p class="desc">Lectura de la selección actual.</p>
+      <div class="insights" id="c-ins"></div>
+    </div>
+
+    <div class="card wide">
+      <h2>Detalle por marca</h2>
+      <p class="desc">Clic en un encabezado para ordenar. “—” = dato no disponible en fuente pública.</p>
+      <div class="tablewrap"><table id="tbl">
+        <thead><tr>
+          <th data-k="name">Marca</th><th data-k="seg">Segmento</th>
+          <th data-k="followers">Seguidores</th><th data-k="er">ER</th>
+          <th data-k="avgLikes">Likes/post</th><th data-k="avgComments">Coment./post</th>
+          <th data-k="fb">Facebook</th><th data-k="adsActive">Ads activos</th>
+          <th data-k="adsWeek">Creativos/sem</th><th data-k="posts">Posts</th>
+        </tr></thead><tbody id="tbody"></tbody>
+      </table></div>
+    </div>
+
+    <div class="card wide">
+      <h2>Ficha por marca</h2>
+      <p class="desc">Métricas, pilares y movimientos recientes de cada competidor.</p>
+      <div class="bgrid" id="c-cards"></div>
+    </div>
+
+  </div>
+
+  <footer>
+    <b>Metodología, fuentes y límites honestos.</b>
+    <div class="cols" style="margin-top:10px">
+      <div>
+        <p><b>De dónde salen los datos.</b> Seguidores, ER, likes y comentarios: agregadores públicos (StarNgage, SpeakRJ, HypeAuditor, SocialBlade) e índice de perfiles. Anuncios (activos, creativos/semana, mix de formatos): <b>Motion</b>, que refleja la Meta Ad Library. Fechas de campañas y actividad reciente: prensa del sector (Sprudge, PRNewswire, BevNET, Daily Coffee News, WWD, etc.). Benchmark: <b>Rival IQ</b> (café) — 10.8 posts/sem y 0.19% ER promedio.</p>
+        <div class="keyrow">
+          <span style="color:var(--up)">■ real</span>
+          <span style="color:var(--warn)">◆ muestra / proyección</span>
+          <span>— = no público</span>
+          <span>s/d = sin página en Motion</span>
+        </div>
+      </div>
+      <div>
+        <ul>
+          <li>La <b>Meta Ad Library no tiene API para anuncios comerciales</b>; los conteos vienen de Motion y son <b>indicativos, no exactos</b>. Death Wish, Cometeer y Trade no tienen página en Motion → sin dato (aunque son anunciantes DTC activos).</li>
+          <li>Las <b>fechas de inicio/fin por anuncio individual</b> existen en la Ad Library (públicas por ad) pero requieren la captura diaria del agente — hoy esa sección es una muestra.</li>
+          <li>El <b>engagement por pilar</b> no es medible con datos públicos a nivel post; se reporta a nivel cuenta.</li>
+          <li>Las <b>tendencias diarias</b> se dibujan reales a partir del 2.º snapshot; hoy es la línea base.</li>
+          <li>Algunos datos divergen entre fuentes (ej. Death Wish 344K vs 287K) — se usa la más consistente y se anota.</li>
+        </ul>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<script>
+/* ============================================================
+   DATOS — snapshot. El agente diario actualiza este bloque
+   (o vía update.py + today.json) y re-publica al mismo link.
+   Añadir una entrada a followersHist por marca cada día activa
+   el % de crecimiento real. null = no disponible públicamente.
+============================================================ */
+const SNAPSHOT_DATE = "2026-07-13";
+const NOW = 2026.53425;                 // 13 jul 2026 en años decimales
+const BENCH = { er:0.19, postsWeek:10.8, src:"Rival IQ · Coffee 2026" };
+
+const BRANDS = [
+  { name:"Chamberlain Coffee", handle:"@chamberlaincoffee", seg:"dtc",
+    followersHist:[{d:"2026-07-13",v:544000}], following:null, posts:1793, er:0.36, avgLikes:null, avgComments:182, fb:17450,
+    ads:{active:17,week:5,mix:[["Headline",23],["Demo",18],["How-to",18],["Otros",41]]},
+    pillars:["Matcha","Educación / recetas","Restock / escasez","Colecciones / merch","Influencer / colabs"],
+    recent:["Pinterest × Chamberlain — “Sea Salt Toffee”","Dove Plant Milk Cleansing","818 Tequila (Emma + Kendall)","Lanzamiento RTD lattes","Nuevo café en Venice (mar 2026)"],
+    note:"ER 0.36% (HypeAuditor) · ~182 comentarios/post. Marca construida sobre Emma Chamberlain. Avg likes no público." },
+  { name:"Blue Bottle Coffee", handle:"@bluebottle", seg:"roaster",
+    followersHist:[{d:"2026-07-13",v:513000}], following:832, posts:2551, er:0.45, avgLikes:1990, avgComments:16, fb:157972,
+    ads:{active:31,week:8,mix:[["Headline",40],["Demo",23],["Review",9],["Otros",28]]},
+    pillars:["Café frío / iced","Repostería estacional","Matcha / té japonés","Especialidad / brewing","Estética de marca","Sostenibilidad"],
+    recent:["Nespresso × Blue Bottle — NOLA Style Blend","Primer programa de lealtad (sep 2025)","Carbono neutral alcanzado","Agricultura regenerativa (Perú 2026)"],
+    note:"ER 0.45% · ~1,990 likes / 16 comentarios por post (StarNgage). El mayor anunciante en creativos/semana (~8)." },
+  { name:"Death Wish Coffee", handle:"@deathwishcoffee", seg:"dtc",
+    followersHist:[{d:"2026-07-13",v:344000}], following:1098, posts:6888, er:0.40, avgLikes:1219, avgComments:63, fb:696778,
+    ads:{active:null,week:null,mix:null},
+    pillars:["Fuerza / alta cafeína","Humor / branding calavera","Comunidad / UGC","Merch / ediciones limitadas","Suscripción","Colabs culturales"],
+    recent:["Marvel “Daredevil: Born Again” — Rise Again Box (mar 2026)","Power Surge — blend +20% cafeína (abr 2026)","Caramel Cold Brew Latte (mar 2026)","Mug LE × Deneen Pottery"],
+    note:"IG 344K (SpeakRJ crawl viejo muestra 287K). FB gigantesco: 696K. Sin página en Motion — ads sin confirmar (anunciante DTC fuerte)." },
+  { name:"Onyx Coffee Lab", handle:"@onyxcoffeelab", seg:"roaster",
+    followersHist:[{d:"2026-07-13",v:285000}], following:2873, posts:8197, er:null, avgLikes:null, avgComments:null, fb:42178,
+    ads:{active:38,week:5,mix:[["Demo",26],["Headline",23],["Cinematic B-Roll",13],["Otros",38]]},
+    pillars:["Product drops / estacional","Single-origin / especialidad","Educación / brewing","Colabs / ediciones limitadas","Roastery lifestyle"],
+    recent:["Project Echelon 2026 (suscripción premium)","(ONYX)RED × (RED)","Partnership con Cometeer (may 2026)","Artist Series"],
+    note:"El anunciante MÁS activo del set: 38 anuncios activos. Engagement no público (agregadores bloqueados)." },
+  { name:"Cometeer", handle:"@cometeer", seg:"dtc",
+    followersHist:[{d:"2026-07-13",v:95000}], following:170, posts:525, er:null, avgLikes:null, avgComments:null, fb:null,
+    ads:{active:null,week:null,mix:null},
+    pillars:["Café flash-congelado / cápsulas","Conveniencia / how-it-works","Partnerships con roasters","Sostenibilidad","Suscripción","Educación de cata"],
+    recent:["Partnership Onyx + Counter Culture (may 2026)","James Hoffmann Discovery Kit (ago 2025)","Proud Mary como roaster partner (2025)","Houseplant Coffee (Seth Rogen)"],
+    note:"Startup DTC de café congelado (levantó $35M). Engagement e IG-stats no públicos. Sin página en Motion." },
+  { name:"Trade Coffee", handle:"@tradecoffeeco", seg:"dtc",
+    followersHist:[{d:"2026-07-13",v:84000}], following:1666, posts:1662, er:null, avgLikes:null, avgComments:null, fb:13251,
+    ads:{active:null,week:null,mix:null},
+    pillars:["Coffee matching / quiz","Partner roasters / variedad","Suscripción / conveniencia","Educación / brewing","Reels"],
+    recent:["Serie “Roaster Spotlight” (activa 2025–2026)","55+ roasters en ~38 estados","Levantó $9M (Madrona Venture Group)"],
+    note:"Marketplace de suscripción (“#1 coffee subscription”). Engagement no público. Sin página en Motion (anunciante DTC)." }
+];
+
+/* Campañas por tema — fechas REALES (prensa). end:null = en curso. approx=fecha estimada */
+const CAMPAIGNS = [
+  { brand:"Cometeer",            name:"Houseplant Coffee (Seth Rogen)",        cat:"Colab",        s:"2024-02-01", e:null, approxS:true },
+  { brand:"Chamberlain Coffee",  name:"818 Tequila (espresso martini)",        cat:"Colab",        s:"2025-02-01", e:null, approxS:true },
+  { brand:"Chamberlain Coffee",  name:"Dove Plant Milk",                       cat:"Colab",        s:"2025-04-01", e:null, approxS:true },
+  { brand:"Cometeer",            name:"Proud Mary — roaster partner",          cat:"Colab",        s:"2025-04-01", e:null, approxS:true },
+  { brand:"Blue Bottle Coffee",  name:"Nespresso × Blue Bottle — NOLA Blend",  cat:"Colab",        s:"2025-06-11", e:null },
+  { brand:"Chamberlain Coffee",  name:"Pinterest × Chamberlain (pop-up)",      cat:"Colab",        s:"2025-06-17", e:"2025-06-24" },
+  { brand:"Trade Coffee",        name:"Serie “Roaster Spotlight”",             cat:"Colab",        s:"2025-08-01", e:null, approxS:true },
+  { brand:"Cometeer",            name:"James Hoffmann Discovery Kit",          cat:"Producto/Drop",s:"2025-08-22", e:"2025-11-01", approxE:true },
+  { brand:"Blue Bottle Coffee",  name:"Programa de lealtad (1.º)",             cat:"Retención",    s:"2025-09-01", e:null, approxS:true },
+  { brand:"Onyx Coffee Lab",     name:"(ONYX)RED × (RED)",                     cat:"Colab",        s:"2025-11-01", e:null, approxS:true },
+  { brand:"Death Wish Coffee",   name:"Mug LE × Deneen Pottery",               cat:"Producto/Drop",s:"2026-01-01", e:null, approxS:true },
+  { brand:"Onyx Coffee Lab",     name:"Project Echelon 2026 (suscripción)",    cat:"Producto/Drop",s:"2026-01-01", e:"2026-12-31" },
+  { brand:"Blue Bottle Coffee",  name:"Agricultura regenerativa (Perú)",       cat:"Sostenibilidad",s:"2026-01-01", e:null },
+  { brand:"Chamberlain Coffee",  name:"Café Venice (apertura)",                cat:"Retail",       s:"2026-03-01", e:null },
+  { brand:"Death Wish Coffee",   name:"Caramel Cold Brew Latte",               cat:"Producto/Drop",s:"2026-03-01", e:null },
+  { brand:"Death Wish Coffee",   name:"Marvel “Daredevil” — Rise Again Box",   cat:"Colab",        s:"2026-03-20", e:"2026-06-01", approxE:true },
+  { brand:"Death Wish Coffee",   name:"Power Surge (+20% cafeína)",            cat:"Producto/Drop",s:"2026-04-01", e:null },
+  { brand:"Cometeer",            name:"Partnership Onyx + Counter Culture",    cat:"Colab",        s:"2026-05-01", e:null },
+  { brand:"Onyx Coffee Lab",     name:"Onyx × Cometeer",                       cat:"Colab",        s:"2026-05-01", e:null }
+];
+const CAT_COLOR={Colab:"var(--colab)",Estacional:"var(--estac)","Sostenibilidad":"var(--sost)","Producto/Drop":"var(--drop)",Retail:"var(--retail)","Retención":"var(--reten)"};
+
+/* Vuelo de anuncios — MUESTRA ilustrativa (se reemplaza con captura diaria de Ad Library) */
+const FLIGHT_SAMPLE = [
+  { brand:"Onyx Coffee Lab",     label:"Demo — Project Echelon",     s:"2026-05-02", e:null },
+  { brand:"Onyx Coffee Lab",     label:"Headline — Suscripción",     s:"2026-06-18", e:null },
+  { brand:"Onyx Coffee Lab",     label:"Cinematic B-Roll — Roastery", s:"2026-04-20", e:"2026-06-10" },
+  { brand:"Blue Bottle Coffee",  label:"Headline — Gifting bundle",  s:"2026-05-25", e:null },
+  { brand:"Blue Bottle Coffee",  label:"Demo — Matcha latte",        s:"2026-06-30", e:null },
+  { brand:"Blue Bottle Coffee",  label:"Review — Instant coffee",    s:"2026-04-28", e:"2026-06-02" },
+  { brand:"Chamberlain Coffee",  label:"How-to — Matcha prep",       s:"2026-06-05", e:null },
+  { brand:"Chamberlain Coffee",  label:"Headline — Restock matcha",  s:"2026-06-22", e:null },
+  { brand:"Chamberlain Coffee",  label:"Demo — Spring Box",          s:"2026-05-10", e:"2026-06-15" }
+];
+
+/* ---------- helpers ---------- */
+const fmtK=n=>n==null?null:(n>=1e6?(n/1e6).toFixed(n>=1e7?0:1).replace(/\.0$/,"")+"M":n>=1e3?Math.round(n/1e3)+"K":""+n);
+const fmtN=n=>n==null?null:n.toLocaleString("en-US");
+const curF=b=>b.followersHist[b.followersHist.length-1].v;
+const segColor=b=>b.seg==="roaster"?"var(--accent2)":"var(--accent)";
+const segLabel=s=>s==="roaster"?"roaster":"DTC";
+function parseD(s){const p=s.split("-");return +p[0]+((+p[1]-1)*30+((+p[2]||1)-1))/365;}
+function fmtDate(s){if(!s)return "en curso";const[y,m,d]=s.split("-");const M=["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];return `${d?+d+" ":""}${M[+m-1]} ${y.slice(2)}`;}
+function niceMax(v){if(v<=0)return 1;const p=Math.pow(10,Math.floor(Math.log10(v)));const n=v/p;const m=n<=1?1:n<=2?2:n<=2.5?2.5:n<=5?5:10;return m*p;}
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+
+/* ---------- SVG ---------- */
+function svgBarsH(items,opt){opt=opt||{};const w=opt.w||520,pad={l:10,r:44,t:8,b:8};
+  const bh=18,gapv=14,h=pad.t+pad.b+items.length*bh+(items.length-1)*gapv;
+  const max=opt.max||niceMax(Math.max(...items.map(i=>i.v||0),1));const iw=w-pad.l-pad.r;let g="";
+  if(opt.bench!=null){const x=pad.l+iw*opt.bench/max;g+=`<line class="bench" x1="${x}" y1="${pad.t-2}" x2="${x}" y2="${h-pad.b}"/>`;}
+  items.forEach((it,i)=>{const y=pad.t+i*(bh+gapv);const bw=it.v==null?0:iw*it.v/max;
+    g+=`<text x="${pad.l}" y="${y-3}" style="fill:var(--mid);font-size:11px;font-family:var(--sans)">${it.label}</text>`;
+    g+=`<rect x="${pad.l}" y="${y}" width="${iw}" height="${bh}" rx="4" fill="var(--panel2)"/>`;
+    if(it.v!=null)g+=`<rect x="${pad.l}" y="${y}" width="${bw.toFixed(1)}" height="${bh}" rx="4" fill="${it.color||'var(--accent)'}"/>`;
+    g+=`<text x="${w-pad.r+6}" y="${y+bh-4}" style="fill:var(--hi);font-size:11px;font-weight:700;font-family:var(--mono)">${it.v==null?'—':it.disp}</text>`;});
+  return `<svg viewBox="0 0 ${w} ${h}" class="chart" role="img">${g}</svg>`;
+}
+function svgScatter(pts,opt){opt=opt||{};const w=opt.w||760,h=opt.h||360,pad={l:54,r:20,t:16,b:44};
+  const iw=w-pad.l-pad.r,ih=h-pad.t-pad.b;const xmax=niceMax(Math.max(...pts.map(p=>p.x)));const ymax=niceMax(Math.max(...pts.map(p=>p.y),0.5));
+  const X=v=>pad.l+iw*v/xmax,Y=v=>pad.t+ih-ih*v/ymax;let g="";
+  for(let s=0;s<=4;s++){const yy=pad.t+ih-ih*s/4;g+=`<line class="grid" x1="${pad.l}" y1="${yy}" x2="${w-pad.r}" y2="${yy}"/><text class="axis" x="${pad.l-8}" y="${yy+3}" text-anchor="end">${(ymax*s/4).toFixed(2)}%</text>`;}
+  for(let s=0;s<=4;s++){const xx=pad.l+iw*s/4;g+=`<text class="axis" x="${xx}" y="${h-26}" text-anchor="middle">${fmtK(Math.round(xmax*s/4))}</text>`;}
+  const by=pad.t+ih-ih*BENCH.er/ymax;g+=`<line class="bench" x1="${pad.l}" y1="${by}" x2="${w-pad.r}" y2="${by}"/><text class="axis" x="${w-pad.r}" y="${by-4}" text-anchor="end" style="fill:var(--accent2)">benchmark ${BENCH.er}%</text>`;
+  pts.forEach(p=>{g+=`<circle cx="${X(p.x).toFixed(1)}" cy="${Y(p.y).toFixed(1)}" r="${p.r.toFixed(1)}" fill="${p.color}" fill-opacity=".55" stroke="${p.color}" stroke-width="1"><title>${p.label}</title></circle>`;
+    g+=`<text x="${X(p.x).toFixed(1)}" y="${(Y(p.y)-p.r-4).toFixed(1)}" text-anchor="middle" class="axis" style="fill:var(--mid);font-size:10px">${p.short}</text>`;});
+  g+=`<text class="axistitle" x="${pad.l+iw/2}" y="${h-6}" text-anchor="middle">Seguidores en Instagram →</text>`;
+  g+=`<text class="axistitle" x="14" y="${pad.t+ih/2}" text-anchor="middle" transform="rotate(-90 14 ${pad.t+ih/2})">Engagement rate ↑</text>`;
+  return `<svg viewBox="0 0 ${w} ${h}" class="chart" role="img">${g}</svg>`;
+}
+function svgLines(series,labels,opt){opt=opt||{};const w=opt.w||760,h=opt.h||300,pad={l:52,r:16,t:14,b:30};
+  const iw=w-pad.l-pad.r,ih=h-pad.t-pad.b;let max=0,min=Infinity;series.forEach(s=>s.pts.forEach(v=>{if(v>max)max=v;if(v<min)min=v;}));
+  const lo=min*0.985,hi=max*1.01,rng=hi-lo||1;const n=labels.length;
+  const X=i=>pad.l+iw*i/Math.max(1,n-1),Y=v=>pad.t+ih-ih*(v-lo)/rng;let g="";
+  for(let s=0;s<=4;s++){const val=lo+rng*s/4,yy=Y(val);g+=`<line class="grid" x1="${pad.l}" y1="${yy.toFixed(1)}" x2="${w-pad.r}" y2="${yy.toFixed(1)}"/><text class="axis" x="${pad.l-8}" y="${(yy+3).toFixed(1)}" text-anchor="end">${fmtK(Math.round(val))}</text>`;}
+  labels.forEach((lb,i)=>{if(i%2===0||i===n-1)g+=`<text class="axis" x="${X(i).toFixed(1)}" y="${h-10}" text-anchor="middle">${lb}</text>`;});
+  series.forEach(s=>{const d=s.pts.map((v,i)=>(i?'L':'M')+X(i).toFixed(1)+' '+Y(v).toFixed(1)).join(' ');
+    g+=`<path d="${d}" fill="none" stroke="${s.color}" stroke-width="2" stroke-dasharray="${s.dash||''}" stroke-linejoin="round" opacity="${s.dash?0.85:1}"/>`;
+    const li=s.pts.length-1;g+=`<circle cx="${X(li).toFixed(1)}" cy="${Y(s.pts[li]).toFixed(1)}" r="3.6" fill="${s.color}"/>`;});
+  return `<svg viewBox="0 0 ${w} ${h}" class="chart" role="img">${g}</svg>`;
+}
+
+/* ---------- state / filters ---------- */
+const state={seg:"todos",brands:new Set(),sort:"followers",dir:-1,csort:"s",cdir:1};
+document.getElementById("b-date").textContent="Snapshot · "+SNAPSHOT_DATE;
+function filtered(){return BRANDS.filter(b=>(state.seg==="todos"||b.seg===state.seg)&&(state.brands.size===0||state.brands.has(b.name)));}
+
+(function buildFilters(){
+  const fb=document.getElementById("fbrand");
+  fb.innerHTML='<button class="chip active" data-b="__all">Todas</button>'+BRANDS.map(b=>`<button class="chip" data-b="${b.name}">${b.name.replace(" Coffee","").replace(" Lab","")}</button>`).join("");
+  fb.addEventListener("click",e=>{const btn=e.target.closest("button");if(!btn)return;const b=btn.dataset.b;
+    if(b==="__all")state.brands.clear();else{state.brands.has(b)?state.brands.delete(b):state.brands.add(b);}
+    [...fb.children].forEach(c=>c.classList.toggle("active",c.dataset.b==="__all"?state.brands.size===0:state.brands.has(c.dataset.b)));render();});
+  document.getElementById("fseg").addEventListener("click",e=>{const btn=e.target.closest("button");if(!btn)return;
+    state.seg=btn.dataset.c;[...e.currentTarget.children].forEach(c=>c.classList.toggle("active",c===btn));render();});
+  document.querySelectorAll("#tbl thead th").forEach(th=>th.addEventListener("click",()=>{
+    const k=th.dataset.k;if(state.sort===k)state.dir*=-1;else{state.sort=k;state.dir=(k==="name"||k==="seg")?1:-1;}renderTable();}));
+  document.querySelectorAll("#tbl-camp thead th").forEach(th=>th.addEventListener("click",()=>{
+    const k=th.dataset.k;if(state.csort===k)state.cdir*=-1;else{state.csort=k;state.cdir=1;}renderCampTable();}));
+})();
+
+/* ---------- KPIs ---------- */
+function renderKPIs(f){
+  const reach=f.reduce((a,b)=>a+curF(b),0);
+  const erv=f.filter(b=>b.er!=null).map(b=>b.er);
+  const erAvg=erv.length?erv.reduce((a,v)=>a+v,0)/erv.length:null;
+  const adB=f.filter(b=>b.ads&&b.ads.active);const ads=adB.reduce((a,b)=>a+b.ads.active,0);
+  const week=adB.reduce((a,b)=>a+b.ads.week,0);
+  const dtc=f.filter(b=>b.seg==="dtc").length,ro=f.filter(b=>b.seg==="roaster").length;
+  const topAd=[...f].sort((a,b)=>((b.ads&&b.ads.active)||0)-((a.ads&&a.ads.active)||0))[0];
+  const k=[
+    {l:"Marcas en vista",v:f.length,f:`${dtc} DTC · ${ro} roaster`},
+    {l:"Alcance IG",v:fmtK(reach),f:"seguidores combinados"},
+    {l:"ER promedio",v:erAvg==null?"—":erAvg.toFixed(2)+"%",f:`sector <b>${BENCH.er}%</b> · n=${erv.length}`},
+    {l:"Ads activos",v:ads||"—",f:`en ${adB.length} de ${f.length} marcas`},
+    {l:"Creativos / sem",v:week||"—",f:"nuevos anuncios/semana"},
+    {l:"Más agresivo",v:topAd&&topAd.ads&&topAd.ads.active?topAd.name.split(" ")[0]:"—",f:topAd&&topAd.ads&&topAd.ads.active?`<b>${topAd.ads.active}</b> ads activos`:"sin ads"}
+  ];
+  document.getElementById("kpis").innerHTML=k.map(c=>`<div class="kpi"><div class="kl">${c.l}</div><div class="kv">${c.v}</div><div class="kf">${c.f}</div></div>`).join("");
+}
+
+/* ---------- rank ---------- */
+function rankRows(el,items,fmt,colorFn){
+  const mx=Math.max(...items.map(i=>i.v||0),1);
+  el.innerHTML=items.map((it,i)=>`<div><div class="rrow"><span class="rnk">${i+1}</span>
+    <div style="min-width:0"><div class="rname">${it.name}</div><div class="rmeta">${it.meta||""}</div></div>
+    <span class="rval">${it.v==null?'<span style="color:var(--dim)">'+(it.na||'—')+'</span>':fmt(it.v)}</span></div>
+    <div class="rbar"><i style="width:${it.v==null?0:(it.v/mx*100)}%;background:${colorFn?colorFn(it):'var(--accent)'}"></i></div></div>`).join("");
+}
+function renderFollowers(f){rankRows(document.getElementById("c-followers"),
+  [...f].sort((a,b)=>curF(b)-curF(a)).map(b=>({name:b.name,meta:b.handle+" · "+segLabel(b.seg),v:curF(b),c:segColor(b)})),
+  v=>fmtK(v), it=>it.c);}
+function renderFB(f){rankRows(document.getElementById("c-fb"),
+  [...f].sort((a,b)=>(b.fb||-1)-(a.fb||-1)).map(b=>({name:b.name,meta:b.handle,v:b.fb,c:segColor(b)})),
+  v=>fmtK(v), it=>it.c);}
+function renderER(f){const items=[...f].sort((a,b)=>(b.er||-1)-(a.er||-1)).map(b=>({label:b.name.replace(" Coffee","").replace(" Lab",""),v:b.er,disp:b.er!=null?b.er.toFixed(2)+"%":"—",color:segColor(b)}));
+  document.getElementById("c-er").innerHTML=svgBarsH(items,{bench:BENCH.er,max:Math.max(...items.map(i=>i.v||0),0.5)});}
+function renderAds(f){rankRows(document.getElementById("c-ads"),
+  [...f].sort((a,b)=>((b.ads&&b.ads.active)??-1)-((a.ads&&a.ads.active)??-1)).map(b=>({
+    name:b.name,meta:b.ads&&b.ads.active?`~${b.ads.week} creativos/sem`:"sin página en Motion",
+    v:(b.ads&&b.ads.active!=null)?b.ads.active:null, na:"s/d"})),
+  v=>v, ()=>"var(--accent)");}
+
+function renderScatter(f){const pts=f.filter(b=>b.er!=null).map(b=>({
+    x:curF(b),y:b.er,r:7+Math.sqrt(b.posts/150),color:segColor(b),
+    short:b.name.replace(" Coffee","").replace(" Lab",""),label:`${b.name}: ${fmtK(curF(b))} · ${b.er}% ER · ${b.posts} posts`}));
+  if(pts.length<1){document.getElementById("c-scatter").innerHTML='<p class="desc">Ninguna marca de la selección tiene ER público.</p>';return;}
+  document.getElementById("c-scatter").innerHTML=svgScatter(pts)+
+    `<p class="desc" style="margin-top:8px">Solo ${pts.length} de ${f.length} marcas tienen ER público. Las que tienen dato (0.36–0.45%) están <b>por encima</b> del benchmark del sector (0.19%) — audiencias más chicas pero más comprometidas.</p>`;}
+
+function renderMix(f){const adB=f.filter(b=>b.ads&&b.ads.mix);
+  if(!adB.length){document.getElementById("c-mix").innerHTML='<p class="desc">Ninguna marca de la selección tiene mix de formatos disponible.</p>';return;}
+  const COLORS=["var(--accent)","var(--drop)","var(--retail)","#8a7259","var(--estac)"];
+  document.getElementById("c-mix").innerHTML=adB.map(b=>{
+    const tot=b.ads.mix.reduce((s,m)=>s+m[1],0);
+    const segs=b.ads.mix.map((m,i)=>`<i style="width:${m[1]/tot*100}%;background:${COLORS[i%COLORS.length]}" title="${m[0]} ${m[1]}%"></i>`).join("");
+    const leg=b.ads.mix.map((m,i)=>`<span><i style="background:${COLORS[i%COLORS.length]}"></i>${m[0]} ${m[1]}%</span>`).join("");
+    return `<div class="stackrow"><div class="sh">${b.name}<b>${b.ads.active} ads</b></div><div class="stack">${segs}</div><div class="legend">${leg}</div></div>`;
+  }).join("");}
+
+const PILLAR_MAP=[
+  ["Colabs / ediciones limitadas",["colab","ediciones","limitad","influencer","partnership"]],
+  ["Estacional / product drops",["estacional","seasonal","holiday","drops","product drop","drop"]],
+  ["Café / lifestyle / estética",["café","cafe","lifestyle","roastery","estética"]],
+  ["Single-origin / sourcing",["single-origin","sourcing","especialidad","roasters","partner roasters"]],
+  ["Educación / brewing",["educación","brewing","recetas","how-it","how-to","cata","matching","quiz"]],
+  ["Café frío / cápsulas / RTD",["frío","iced","cápsulas","congelado"]],
+  ["Matcha / té",["matcha","té","tea"]],
+  ["Sostenibilidad",["sostenibilidad"]],
+  ["Suscripción / conveniencia",["suscripción","conveniencia","restock","escasez"]],
+  ["Humor / comunidad / UGC",["humor","calavera","comunidad","ugc","reels","merch"]]
+];
+function renderPillars(f){
+  const rows=PILLAR_MAP.map(([label,keys])=>{let c=0;f.forEach(b=>{const hay=b.pillars.join(" ").toLowerCase();if(keys.some(k=>hay.includes(k)))c++;});return{name:label,v:c};})
+    .filter(r=>r.v>0).sort((a,b)=>b.v-a.v).map(r=>({name:r.name,meta:`${r.v} de ${f.length} marcas`,v:r.v}));
+  rankRows(document.getElementById("c-pillars"),rows,v=>v+"/"+f.length,()=>"var(--sost)");}
+
+/* ---------- Gantt ---------- */
+function renderGantt(f){
+  const names=new Set(f.map(b=>b.name));
+  const camps=CAMPAIGNS.filter(c=>names.has(c.brand)).slice().sort((a,b)=>parseD(a.s)-parseD(b.s));
+  const el=document.getElementById("c-gantt");
+  if(!camps.length){el.innerHTML='<p class="desc">Sin campañas registradas para esta selección.</p>';document.getElementById("l-gantt").innerHTML="";return;}
+  const d0=2024.0,d1=2026.95,span=d1-d0;const pos=v=>((v-d0)/span*100);
+  const ticks=[];for(let y=2024;y<=2026;y++)for(let q=0;q<4;q++){const val=y+q*0.25;if(val<d0-0.01||val>d1)continue;ticks.push({val,lbl:`Q${q+1}'${(""+y).slice(2)}`});}
+  const axis=`<div class="tl-axis">${ticks.map(t=>`<span class="tick" style="left:${pos(t.val)}%">${t.lbl}</span>`).join("")}</div>`;
+  const rows=camps.map(c=>{const s=parseD(c.s),e=c.e?parseD(c.e):NOW;const L=pos(s),W=Math.max(1.5,pos(e)-pos(s));
+    const cls=`tlbar${c.e?"":" ongoing"}${c.approxS||c.approxE?" approx":""}`;
+    return `<div class="tlrow"><div class="tll"><div class="nm">${c.name}</div><div class="mt">${c.brand.replace(" Coffee","").replace(" Lab","")} · ${c.cat}</div></div>
+      <div class="tltrack"><div class="${cls}" style="left:${L}%;width:${W}%;background:${CAT_COLOR[c.cat]}"></div><div class="tlnow" style="left:${pos(NOW)}%"></div></div></div>`;}).join("");
+  el.innerHTML=axis+rows;
+  const cats=[...new Set(camps.map(c=>c.cat))];
+  document.getElementById("l-gantt").innerHTML=cats.map(c=>`<span><i style="background:${CAT_COLOR[c]}"></i>${c}</span>`).join("")+`<span style="color:var(--dim)">rayado = fecha aprox · sin borde der. = en curso · línea verde = hoy</span>`;
+}
+function renderCampTable(){
+  const names=new Set(filtered().map(b=>b.name));
+  let camps=CAMPAIGNS.filter(c=>names.has(c.brand)).map(c=>({...c,status:c.e?(parseD(c.e)<NOW?"Finalizada":"Programada"):"En curso"}));
+  const k=state.csort,d=state.cdir;
+  camps.sort((a,b)=>{if(k==="s"||k==="e"){const x=a[k]?parseD(a[k]):9999,y=b[k]?parseD(b[k]):9999;return(x-y)*d;}return((""+(a[k]||"")).localeCompare(""+(b[k]||"")))*d;});
+  document.querySelectorAll("#tbl-camp thead th").forEach(th=>{th.classList.remove("up","down");if(th.dataset.k===k)th.classList.add(d>0?"up":"down");});
+  document.getElementById("camp-body").innerHTML=camps.map(c=>`<tr>
+    <td class="name">${c.brand.replace(" Coffee","").replace(" Lab","")}</td><td class="name" style="font-weight:500">${c.name}</td>
+    <td style="text-align:left"><span class="tag" style="border-color:${CAT_COLOR[c.cat]};color:${CAT_COLOR[c.cat]}">${c.cat}</span></td>
+    <td>${fmtDate(c.s)}${c.approxS?" ~":""}</td><td>${c.e?fmtDate(c.e)+(c.approxE?" ~":""):"—"}</td>
+    <td style="text-align:left"><span class="pill-st ${c.status==='Finalizada'?'off':'on'}">${c.status}</span></td></tr>`).join("");
+}
+
+/* ---------- Vuelo de anuncios (muestra) ---------- */
+function renderFlight(f){
+  const names=new Set(f.map(b=>b.name));
+  const flights=FLIGHT_SAMPLE.filter(x=>names.has(x.brand)).slice().sort((a,b)=>parseD(a.s)-parseD(b.s));
+  const el=document.getElementById("c-flight");
+  if(!flights.length){el.innerHTML='<p class="desc">Selecciona marcas con ads en Motion (Onyx, Blue Bottle, Chamberlain) para ver la muestra.</p>';return;}
+  const d0=2026.28,d1=NOW+0.02,span=d1-d0;const pos=v=>((v-d0)/span*100);
+  const M=["ene","feb","mar","abr","may","jun","jul"];const ticks=[];for(let m=4;m<=7;m++)ticks.push({val:2026+((m-1)*30)/365,lbl:M[m-1]});
+  const axis=`<div class="tl-axis" style="--lblw:210px">${ticks.map(t=>`<span class="tick" style="left:${pos(t.val)}%">${t.lbl}</span>`).join("")}</div>`;
+  const rows=flights.map(x=>{const s=parseD(x.s),e=x.e?parseD(x.e):NOW;const L=pos(s),W=Math.max(2,pos(e)-pos(s));
+    const days=Math.round((e-s)*365);const on=!x.e;
+    return `<div class="tlrow" style="--lblw:210px"><div class="tll"><div class="nm">${x.label}</div><div class="mt">${x.brand.replace(" Coffee","").replace(" Lab","")} · ${on?'<span style="color:var(--up)">activo '+days+'d</span>':'finalizó · '+days+'d'} · inicio ${fmtDate(x.s)}</div></div>
+      <div class="tltrack"><div class="tlbar${on?" ongoing":""}" style="left:${L}%;width:${W}%;background:${on?'var(--accent)':'var(--dim)'}"></div></div></div>`;}).join("");
+  el.innerHTML=axis+rows;
+}
+
+/* ---------- Crecimiento diario ---------- */
+function renderDaily(f){
+  const top=[...f].sort((a,b)=>curF(b)-curF(a)).slice(0,6);
+  const COLORS=["var(--accent)","var(--accent2)","var(--drop)","var(--retail)","var(--warn)","var(--reten)"];
+  const maxHist=Math.max(...f.map(b=>b.followersHist.length),1);
+  const badge=document.getElementById("daily-badge");
+  if(maxHist>=2){
+    const base=top.reduce((a,b)=>b.followersHist.length>a.followersHist.length?b:a,top[0]);
+    const labels=base.followersHist.map(hh=>{const[,m,d]=hh.d.split("-");const M=["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];return (+d)+" "+M[+m-1];});
+    const series=top.map((b,idx)=>({pts:b.followersHist.map(hh=>hh.v),color:COLORS[idx%COLORS.length]}));
+    document.getElementById("c-daily").innerHTML=svgLines(series,labels,{h:300});
+    document.getElementById("l-daily").innerHTML=top.map((b,i)=>`<span><i style="background:${COLORS[i%COLORS.length]}"></i>${b.name.replace(" Coffee","").replace(" Lab","")}</span>`).join("")+`<span style="color:var(--up)">línea real · ${maxHist} snapshots</span>`;
+    badge.className="badge live";badge.textContent="datos reales";
+    return;
+  }
+  const DAYS=14;const labels=[];for(let i=DAYS-1;i>=0;i--){const day=13-i;labels.push((day>0?day:30+day)+(day>0?" jul":" jun"));}
+  const series=top.map((b,idx)=>{const rng=mulberry32(1000+idx*97+curF(b)%1000);const cur=curF(b);const g=0.0016+rng()*0.002;
+    const pts=[];for(let i=DAYS-1;i>=0;i--){const noise=1+(rng()-0.5)*0.01;pts.unshift(Math.round(cur/Math.pow(1+g,i)*noise));}
+    pts[DAYS-1]=cur;return{pts,color:COLORS[idx%COLORS.length],dash:"4 3"};});
+  document.getElementById("c-daily").innerHTML=svgLines(series,labels,{h:300});
+  document.getElementById("l-daily").innerHTML=top.map((b,i)=>`<span><i style="background:${COLORS[i%COLORS.length]}"></i>${b.name.replace(" Coffee","").replace(" Lab","")}</span>`).join("")+`<span style="color:var(--dim)">punteado = proyección de muestra · punto = dato real de hoy</span>`;
+}
+
+/* ---------- Insights ---------- */
+function renderInsights(f){
+  const byF=[...f].sort((a,b)=>curF(b)-curF(a));
+  const adB=f.filter(b=>b.ads&&b.ads.active);
+  const topAd=[...adB].sort((a,b)=>b.ads.active-a.ads.active)[0];
+  const topVel=[...adB].sort((a,b)=>b.ads.week-a.ads.week)[0];
+  const erB=f.filter(b=>b.er!=null).sort((a,b)=>b.er-a.er);
+  const topFB=[...f].filter(b=>b.fb!=null).sort((a,b)=>b.fb-a.fb)[0];
+  const camps=CAMPAIGNS.filter(c=>new Set(f.map(b=>b.name)).has(c.brand));
+  const ongoing=camps.filter(c=>!c.e||parseD(c.e)>NOW).length;
+  const noMotion=f.filter(b=>!b.ads||b.ads.active==null).length;
+  const ins=[];
+  if(byF[0])ins.push({ic:"👑",h:"Mayor audiencia IG",t:`<b>${byF[0].name}</b> lidera con <b>${fmtK(curF(byF[0]))}</b> seguidores.`});
+  if(topAd)ins.push({ic:"📣",h:"Más agresivo en ads",t:`<b>${topAd.name}</b> corre <b>${topAd.ads.active}</b> anuncios activos en Meta.`});
+  if(topVel)ins.push({ic:"⚡",h:"Más testeo creativo",t:`<b>${topVel.name}</b> publica ~<b>${topVel.ads.week}</b> creativos nuevos por semana.`});
+  if(erB[0])ins.push({ic:"❤️",h:"Mejor engagement",t:`<b>${erB[0].name}</b> tiene el ER más alto: <b>${erB[0].er}%</b> — sobre el sector (${BENCH.er}%).`});
+  if(topFB)ins.push({ic:"📘",h:"Dominio en Facebook",t:`<b>${topFB.name}</b> arrasa en FB con <b>${fmtK(topFB.fb)}</b> seguidores — canal donde no todos invierten.`});
+  ins.push({ic:"🔗",h:"Se cruzan entre sí",t:`<b>Cometeer</b> y <b>Onyx</b> hicieron partnership (may 2026): dos de tu propio set colaborando.`});
+  ins.push({ic:"🕵️",h:"Ángulo ciego de ads",t:`${noMotion} de ${f.length} marcas no están en Motion (Death Wish, Cometeer, Trade) — DTC cuyo volumen de ads no se rastrea sin Ad Library directa.`});
+  ins.push({ic:"🗓️",h:"Campañas vivas",t:`<b>${ongoing}</b> campañas/colabs en curso. Las colabs culturales son el terreno más saturado.`});
+  document.getElementById("c-ins").innerHTML=ins.map(i=>`<div class="ins"><div class="ic">${i.ic}</div><div><div class="ih">${i.h}</div><div class="it">${i.t}</div></div></div>`).join("");
+}
+
+/* ---------- Tabla ---------- */
+function renderTable(){
+  const f=filtered().slice();const k=state.sort,d=state.dir;
+  const get=(b,k)=>k==="followers"?curF(b):k==="adsActive"?((b.ads&&b.ads.active)??-1):k==="adsWeek"?((b.ads&&b.ads.week)??-1):b[k];
+  f.sort((a,b)=>{let x=get(a,k),y=get(b,k);if(typeof x==="string")return x.localeCompare(y)*d;return((x??-1)-(y??-1))*d;});
+  document.querySelectorAll("#tbl thead th").forEach(th=>{th.classList.remove("up","down");if(th.dataset.k===k)th.classList.add(d>0?"up":"down");});
+  const cell=(v,fmt)=>v==null?'<td class="na">—</td>':`<td>${fmt?fmt(v):v}</td>`;
+  document.getElementById("tbody").innerHTML=f.map(b=>`<tr>
+    <td class="name">${b.name}<div style="font-family:var(--mono);font-size:10px;color:var(--dim);font-weight:400">${b.handle}</div></td>
+    <td style="text-align:left"><span class="tag ${b.seg}">${segLabel(b.seg)}</span></td>
+    <td>${fmtK(curF(b))}</td>
+    ${cell(b.er,v=>v.toFixed(2)+"%")}
+    ${cell(b.avgLikes,fmtN)}${cell(b.avgComments,fmtN)}${cell(b.fb,fmtK)}
+    ${b.ads&&b.ads.active!=null?`<td>${b.ads.active}</td>`:'<td class="na">s/d</td>'}
+    ${b.ads&&b.ads.week?`<td>${b.ads.week}</td>`:'<td class="na">s/d</td>'}
+    ${cell(b.posts,fmtN)}
+  </tr>`).join("");
+}
+
+/* ---------- Fichas ---------- */
+function renderCards(f){
+  document.getElementById("c-cards").innerHTML=[...f].sort((a,b)=>curF(b)-curF(a)).map(b=>{
+    const ads=(!b.ads||b.ads.active==null)?`<span class="k">Ads Meta</span><span style="color:var(--dim)">sin dato — verificar manual</span>`
+      :`<span class="k">Ads Meta</span><b>${b.ads.active}</b> activos · ~${b.ads.week} creativos/sem`;
+    return `<div class="bcard">
+      <div class="bh"><div><div class="nm">${b.name}</div><div class="hd">${b.handle}</div></div><span class="tag ${b.seg}">${segLabel(b.seg)}</span></div>
+      <div class="sg"><div class="s"><div class="k">Seguidores</div><div class="v">${fmtK(curF(b))}</div></div>
+        <div class="s"><div class="k">Engagement</div><div class="v ${b.er==null?'sm':''}">${b.er==null?'—':b.er.toFixed(2)+'%'}</div></div>
+        <div class="s"><div class="k">Facebook</div><div class="v ${b.fb==null?'sm':''}">${b.fb==null?'—':fmtK(b.fb)}</div></div>
+        <div class="s"><div class="k">Posts</div><div class="v">${fmtN(b.posts)}</div></div></div>
+      <div class="adsline">${ads}</div>
+      <div><span class="k" style="font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--dim);display:block;margin-bottom:6px">Pilares</span><div class="pilltags">${b.pillars.map(p=>`<span class="pt">${p}</span>`).join("")}</div></div>
+      <div class="recent"><span class="k">Actividad reciente</span><ul>${b.recent.map(r=>`<li>${r}</li>`).join("")}</ul></div>
+      <div class="cardnote">${b.note}</div>
+    </div>`;
+  }).join("");
+}
+
+/* ---------- master ---------- */
+function render(){
+  const f=filtered();
+  document.getElementById("count").textContent=f.length+" marcas";
+  renderKPIs(f);renderFollowers(f);renderER(f);renderAds(f);renderFB(f);renderScatter(f);
+  renderMix(f);renderPillars(f);renderGantt(f);renderCampTable();renderFlight(f);renderDaily(f);
+  renderInsights(f);renderTable();renderCards(f);
+}
+render();
+</script>

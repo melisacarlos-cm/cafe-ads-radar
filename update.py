@@ -21,7 +21,7 @@ El script solo agrega snapshots para las marcas presentes; las ausentes conserva
 """
 import json, re, sys, os
 
-HTML = os.path.join(os.path.dirname(__file__), "cafe-ads-radar.html")
+HTML = os.path.join(os.path.dirname(__file__), "index.html")
 TODAY = os.path.join(os.path.dirname(__file__), "today.json")
 
 def now_decimal(date_str):

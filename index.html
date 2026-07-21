@@ -325,43 +325,43 @@
    Añadir una entrada a followersHist por marca cada día activa
    el % de crecimiento real. null = no disponible públicamente.
 ============================================================ */
-const SNAPSHOT_DATE = "2026-07-20";
-const NOW = 2026.54521;                 // 13 jul 2026 en años decimales
+const SNAPSHOT_DATE = "2026-07-21";
+const NOW = 2026.54795;                 // 13 jul 2026 en años decimales
 const BENCH = { er:0.19, postsWeek:10.8, src:"Rival IQ · Coffee 2026" };
 
 const BRANDS = [
   { name:"Chamberlain Coffee", handle:"@chamberlaincoffee", seg:"dtc",
-    followersHist:[{d:"2026-07-13",v:544000},{d:"2026-07-14",v:544000},{d:"2026-07-15",v:496900},{d:"2026-07-16",v:544000},{d:"2026-07-17",v:496900},{d:"2026-07-18",v:543000},{d:"2026-07-19",v:543000},{d:"2026-07-20",v:543000}], following:null, posts:1793, er:0.36, avgLikes:null, avgComments:182, fb:17450,
+    followersHist:[{d:"2026-07-13",v:544000},{d:"2026-07-14",v:544000},{d:"2026-07-15",v:496900},{d:"2026-07-16",v:544000},{d:"2026-07-17",v:496900},{d:"2026-07-18",v:543000},{d:"2026-07-19",v:543000},{d:"2026-07-20",v:543000},{d:"2026-07-21",v:543000}], following:null, posts:1793, er:0.36, avgLikes:null, avgComments:182, fb:17450,
     ads:{active:17,week:5,mix:[["Headline",23],["Demo",18],["How-to",18],["Otros",41]]},
     pillars:["Matcha","Educación / recetas","Restock / escasez","Colecciones / merch","Influencer / colabs"],
     recent:["Pinterest × Chamberlain — “Sea Salt Toffee”","Dove Plant Milk Cleansing","818 Tequila (Emma + Kendall)","Lanzamiento RTD lattes","Nuevo café en Venice (mar 2026)"],
     note:"ER 0.36% (HypeAuditor) · ~182 comentarios/post. Marca construida sobre Emma Chamberlain. Avg likes no público." },
   { name:"Blue Bottle Coffee", handle:"@bluebottle", seg:"roaster",
-    followersHist:[{d:"2026-07-13",v:513000},{d:"2026-07-14",v:513000},{d:"2026-07-15",v:443295},{d:"2026-07-16",v:514000},{d:"2026-07-17",v:443295},{d:"2026-07-18",v:514000},{d:"2026-07-19",v:514000},{d:"2026-07-20",v:514000}], following:832, posts:2551, er:0.45, avgLikes:1990, avgComments:16, fb:157972,
+    followersHist:[{d:"2026-07-13",v:513000},{d:"2026-07-14",v:513000},{d:"2026-07-15",v:443295},{d:"2026-07-16",v:514000},{d:"2026-07-17",v:443295},{d:"2026-07-18",v:514000},{d:"2026-07-19",v:514000},{d:"2026-07-20",v:514000},{d:"2026-07-21",v:514000}], following:832, posts:2551, er:0.45, avgLikes:1990, avgComments:16, fb:157972,
     ads:{active:31,week:8,mix:[["Headline",40],["Demo",23],["Review",9],["Otros",28]]},
     pillars:["Café frío / iced","Repostería estacional","Matcha / té japonés","Especialidad / brewing","Estética de marca","Sostenibilidad"],
     recent:["Nespresso × Blue Bottle — NOLA Style Blend","Primer programa de lealtad (sep 2025)","Carbono neutral alcanzado","Agricultura regenerativa (Perú 2026)"],
     note:"ER 0.45% · ~1,990 likes / 16 comentarios por post (StarNgage). El mayor anunciante en creativos/semana (~8)." },
   { name:"Death Wish Coffee", handle:"@deathwishcoffee", seg:"dtc",
-    followersHist:[{d:"2026-07-13",v:344000},{d:"2026-07-14",v:344000},{d:"2026-07-15",v:287683},{d:"2026-07-16",v:287700},{d:"2026-07-17",v:287700},{d:"2026-07-18",v:344000},{d:"2026-07-19",v:344000},{d:"2026-07-20",v:344000}], following:1098, posts:6888, er:0.40, avgLikes:1219, avgComments:63, fb:696778,
+    followersHist:[{d:"2026-07-13",v:344000},{d:"2026-07-14",v:344000},{d:"2026-07-15",v:287683},{d:"2026-07-16",v:287700},{d:"2026-07-17",v:287700},{d:"2026-07-18",v:344000},{d:"2026-07-19",v:344000},{d:"2026-07-20",v:344000},{d:"2026-07-21",v:344000}], following:1098, posts:6888, er:0.40, avgLikes:1219, avgComments:63, fb:696778,
     ads:{active:null,week:null,mix:null},
     pillars:["Fuerza / alta cafeína","Humor / branding calavera","Comunidad / UGC","Merch / ediciones limitadas","Suscripción","Colabs culturales"],
     recent:["Marvel “Daredevil: Born Again” — Rise Again Box (mar 2026)","Power Surge — blend +20% cafeína (abr 2026)","Caramel Cold Brew Latte (mar 2026)","Mug LE × Deneen Pottery"],
     note:"IG 344K (SpeakRJ crawl viejo muestra 287K). FB gigantesco: 696K. Sin página en Motion — ads sin confirmar (anunciante DTC fuerte)." },
   { name:"Onyx Coffee Lab", handle:"@onyxcoffeelab", seg:"roaster",
-    followersHist:[{d:"2026-07-13",v:285000},{d:"2026-07-14",v:284000},{d:"2026-07-15",v:284000},{d:"2026-07-16",v:284000},{d:"2026-07-17",v:285000},{d:"2026-07-18",v:285000},{d:"2026-07-19",v:285000},{d:"2026-07-20",v:285000}], following:2873, posts:8197, er:null, avgLikes:null, avgComments:null, fb:42178,
+    followersHist:[{d:"2026-07-13",v:285000},{d:"2026-07-14",v:284000},{d:"2026-07-15",v:284000},{d:"2026-07-16",v:284000},{d:"2026-07-17",v:285000},{d:"2026-07-18",v:285000},{d:"2026-07-19",v:285000},{d:"2026-07-20",v:285000},{d:"2026-07-21",v:285000}], following:2873, posts:8197, er:null, avgLikes:null, avgComments:null, fb:42178,
     ads:{active:38,week:5,mix:[["Demo",26],["Headline",23],["Cinematic B-Roll",13],["Otros",38]]},
     pillars:["Product drops / estacional","Single-origin / especialidad","Educación / brewing","Colabs / ediciones limitadas","Roastery lifestyle"],
     recent:["Project Echelon 2026 (suscripción premium)","(ONYX)RED × (RED)","Partnership con Cometeer (may 2026)","Artist Series"],
     note:"El anunciante MÁS activo del set: 38 anuncios activos. Engagement no público (agregadores bloqueados)." },
   { name:"Cometeer", handle:"@cometeer", seg:"dtc",
-    followersHist:[{d:"2026-07-13",v:95000},{d:"2026-07-14",v:95000},{d:"2026-07-15",v:95000},{d:"2026-07-16",v:95000},{d:"2026-07-17",v:95000},{d:"2026-07-18",v:95000},{d:"2026-07-19",v:95000},{d:"2026-07-20",v:95000}], following:170, posts:525, er:null, avgLikes:null, avgComments:null, fb:null,
+    followersHist:[{d:"2026-07-13",v:95000},{d:"2026-07-14",v:95000},{d:"2026-07-15",v:95000},{d:"2026-07-16",v:95000},{d:"2026-07-17",v:95000},{d:"2026-07-18",v:95000},{d:"2026-07-19",v:95000},{d:"2026-07-20",v:95000},{d:"2026-07-21",v:95000}], following:170, posts:525, er:null, avgLikes:null, avgComments:null, fb:null,
     ads:{active:null,week:null,mix:null},
     pillars:["Café flash-congelado / cápsulas","Conveniencia / how-it-works","Partnerships con roasters","Sostenibilidad","Suscripción","Educación de cata"],
     recent:["Partnership Onyx + Counter Culture (may 2026)","James Hoffmann Discovery Kit (ago 2025)","Proud Mary como roaster partner (2025)","Houseplant Coffee (Seth Rogen)"],
     note:"Startup DTC de café congelado (levantó $35M). Engagement e IG-stats no públicos. Sin página en Motion." },
   { name:"Trade Coffee", handle:"@tradecoffeeco", seg:"dtc",
-    followersHist:[{d:"2026-07-13",v:84000},{d:"2026-07-14",v:84000},{d:"2026-07-15",v:84000},{d:"2026-07-16",v:84000},{d:"2026-07-17",v:84000},{d:"2026-07-18",v:84000},{d:"2026-07-19",v:84000},{d:"2026-07-20",v:84000}], following:1666, posts:1662, er:null, avgLikes:null, avgComments:null, fb:13251,
+    followersHist:[{d:"2026-07-13",v:84000},{d:"2026-07-14",v:84000},{d:"2026-07-15",v:84000},{d:"2026-07-16",v:84000},{d:"2026-07-17",v:84000},{d:"2026-07-18",v:84000},{d:"2026-07-19",v:84000},{d:"2026-07-20",v:84000},{d:"2026-07-21",v:84000}], following:1666, posts:1662, er:null, avgLikes:null, avgComments:null, fb:13251,
     ads:{active:null,week:null,mix:null},
     pillars:["Coffee matching / quiz","Partner roasters / variedad","Suscripción / conveniencia","Educación / brewing","Reels"],
     recent:["Serie “Roaster Spotlight” (activa 2025–2026)","55+ roasters en ~38 estados","Levantó $9M (Madrona Venture Group)"],

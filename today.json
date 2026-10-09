@@ -1,9 +1,5 @@
 {
-  "date": "2026-10-08",
-  "followers": {
-    "@chamberlaincoffee": 543000,
-    "@bluebottle": 515000
-  },
+  "date": "2026-10-09",
   "ads": {
     "@chamberlaincoffee": {"active": 17, "week": 5},
     "@bluebottle": {"active": 31, "week": 8}

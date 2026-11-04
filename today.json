@@ -1,4 +1,16 @@
 {
-  "date": "2026-11-03",
-  "followers": {"@bluebottle": 443295, "@deathwishcoffee": 287683, "@tradecoffeeco": 73150}
+  "date": "2026-11-04",
+  "followers": {
+    "@chamberlaincoffee": 565366,
+    "@bluebottle": 516814,
+    "@deathwishcoffee": 287683,
+    "@onyxcoffeelab": 285000,
+    "@cometeer": 95000,
+    "@tradecoffeeco": 84000
+  },
+  "ads": {
+    "@chamberlaincoffee": {"active": 17, "week": 5},
+    "@bluebottle": {"active": 31, "week": 8},
+    "@onyxcoffeelab": {"active": 38, "week": 5}
+  }
 }

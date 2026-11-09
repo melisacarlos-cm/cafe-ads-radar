@@ -1,7 +1,11 @@
 {
-  "date": "2026-11-08",
+  "date": "2026-11-09",
   "followers": {
-    "@deathwishcoffee": 287683
+    "@chamberlaincoffee": 565366,
+    "@bluebottle": 516814
   },
-  "ads": {}
+  "ads": {
+    "@chamberlaincoffee": {"active": 17, "week": 5},
+    "@bluebottle": {"active": 31, "week": 8}
+  }
 }
